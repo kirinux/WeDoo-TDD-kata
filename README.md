@@ -1,10 +1,15 @@
-# jobs
-If you want to join our engineering team, you will most likely have to complete one of our challenges:
+### Design notes
 
-* [Backend challenge](https://gitlab.com/wedoogift-jobs/challenge/-/tree/master/backend)
-* [Frontend challenge](https://gitlab.com/wedoogift-jobs/challenge/-/tree/master/frontend)
+The main goal is to build a very easy to understand design and easily extendable, it's based on few uses cases and the
+design would change based on new input.
 
-In order to know more about opened positions on [Wedoogift](https://www.wedoogift.com/), you can check out our welcome to the jungle [page](https://www.welcometothejungle.co/companies/wedoogift/jobs).
+****Main guidelines****
 
-## Sending your result
-You can send your Gitlab project link or zip your directory and send it via email. If you do not use Gitlab, don't forget to attach your .git folder.
+* Full TDD (Outside-In development)
+* DD Inspired / Hexagonal architecture
+* Try to use all domain words
+* To be precise with amount, with should use BigDecimal, but to make the code quicker/simpler I used double (for 2
+  decimal precision it should be enough)* could
+* could wrap ID into object (UserId for example to ensure format, readability)
+* all abstraction are easily interchangeable and extendable (for database impl for example)
+* all the domain only use abstractions
