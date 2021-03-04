@@ -13,45 +13,45 @@ class CompanyAcceptanceTest {
 
     @Test
     void company_without_enough_funds_should_not_be_able_to_make_distribution() {
-        Balance initialCompanyBalance = Balance.of(10);
+        Balance initialBalance = Balance.of(10);
         long endowmentId = 3;
         Company company = CompanyTestBuilder.newCompany()
                 .withEndowment(endowmentId)
-                .withBalance(initialCompanyBalance)
+                .withBalance(initialBalance)
                 .build();
 
-        Distribution distribution = Distribution.newDistributionStartToday(Amount.of(1000));
+        Distribution giftDistribution = Distribution.newGiftDistributionStartToday(Amount.of(1000));
         assertThatExceptionOfType(NotEnoughFundsException.class)
-                .isThrownBy(() -> company.distribute(getEndowment(company, endowmentId), distribution));
+                .isThrownBy(() -> company.distribute(getEndowment(company, endowmentId), giftDistribution));
 
     }
 
     @Test
     void company_with_enough_balance_should_make_distribution() {
-        Balance originalEndownentBalance = Balance.of(10);
-        Balance initialCompanyBalance = Balance.of(1000);
+        WalletBalance originalEndownentWalletBalance = WalletBalance.forGift(10);
+        Balance initialCompanyWalletBalance = Balance.of(1000);
         long endowmentId = 3;
         Company company = CompanyTestBuilder.newCompany()
-                .withEndowment(endowmentId, originalEndownentBalance)
-                .withBalance(initialCompanyBalance)
+                .withEndowment(endowmentId, originalEndownentWalletBalance)
+                .withBalance(initialCompanyWalletBalance)
                 .build();
 
-        Distribution distribution = Distribution.newDistributionStartToday(Amount.of(10));
+        Distribution giftDistribution = Distribution.newGiftDistributionStartToday(Amount.of(10));
 
-        assertThatCode(() -> company.distribute(getEndowment(company, endowmentId), distribution))
+        assertThatCode(() -> company.distribute(getEndowment(company, endowmentId), giftDistribution))
                 .doesNotThrowAnyException();
 
-        assertThat(company.getBalance()).isEqualTo(initialCompanyBalance.minus(distribution.getAmount()));
-        assertEndowmentExistsAndBalanceEquals(endowmentId, company, originalEndownentBalance.plus(distribution.getAmount()));
+        assertThat(company.getInitialBalance()).isEqualTo(initialCompanyWalletBalance.minus(giftDistribution.getAmount()));
+        assertEndowmentExistsAndBalanceEquals(endowmentId, company, originalEndownentWalletBalance.plus(giftDistribution.getAmount()));
     }
 
     private Endowment getEndowment(Company testCompany, long endowmentId) {
         return testCompany.getEndowment(endowmentId).get();
     }
 
-    private void assertEndowmentExistsAndBalanceEquals(long endowmentId, Company company, Balance expectedBalance) {
+    private void assertEndowmentExistsAndBalanceEquals(long endowmentId, Company company, WalletBalance expectedWalletBalance) {
         Optional<Endowment> companyEndowment = company.getEndowment(endowmentId);
         assertThat(companyEndowment).isPresent();
-        assertThat(companyEndowment.get().getBalance()).isEqualTo(expectedBalance);
+        assertThat(companyEndowment.get().getBalances().giftBalance()).isEqualTo(expectedWalletBalance);
     }
 }

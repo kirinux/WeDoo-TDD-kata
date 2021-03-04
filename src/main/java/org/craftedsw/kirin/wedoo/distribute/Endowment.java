@@ -2,12 +2,9 @@ package org.craftedsw.kirin.wedoo.distribute;
 
 import lombok.Getter;
 import lombok.ToString;
-import org.craftedsw.kirin.wedoo.domain.Balance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -18,34 +15,34 @@ public class Endowment {
     private static final Logger LOGGER = LoggerFactory.getLogger(Endowment.class);
 
     private final long id;
-    private final List<Distribution> distributions;
-    private Balance initialBalance;
+    private Balances balances;
 
     public Endowment(long id) {
-        this(id, Balance.of(0));
+        this(id, Balances.initialBalances());
     }
 
-    public Endowment(long id, Balance initialBalance) {
+    public Endowment(long id, Balances initialBalances) {
         this.id = id;
-        this.initialBalance = initialBalance;
-        this.distributions = new ArrayList<>();
+        this.balances = initialBalances;
     }
 
     public void receive(Distribution distribution) {
         LOGGER.debug("receive distribution amount {}", distribution.getAmount());
-        this.distributions.add(distribution);
-        LOGGER.debug("balance after distribution: {}", initialBalance);
+        this.balances.add(distribution);
+        LOGGER.debug("balance after distribution: {}", balances);
     }
 
-    public List<Distribution> getDistributions() {
-        return Collections.unmodifiableList(distributions);
+    public Balances getBalances() {
+        return balances;
     }
 
-    public Balance getBalance() {
-        double sum = distributions.stream()
-                .filter(Distribution::isValid)
-                .mapToDouble(distribution -> distribution.getAmount().getValue())
-                .sum();
-        return Balance.of(sum + initialBalance.getValue());
+    public List<Distribution> getGiftDistributions() {
+        return this.balances.getDistributionsByType(Wallet.Type.GIFT);
     }
+
+    public List<Distribution> getFoodDistributions() {
+        return this.balances.getDistributionsByType(Wallet.Type.FOOD);
+    }
+
+
 }

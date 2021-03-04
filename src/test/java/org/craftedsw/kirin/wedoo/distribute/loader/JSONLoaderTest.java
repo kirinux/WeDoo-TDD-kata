@@ -3,6 +3,7 @@ package org.craftedsw.kirin.wedoo.distribute.loader;
 import org.craftedsw.kirin.wedoo.distribute.api.loader.JSONLoader;
 import org.craftedsw.kirin.wedoo.distribute.infra.InMemoryCompanyRepository;
 import org.craftedsw.kirin.wedoo.distribute.infra.InMemoryEndowmentRepository;
+import org.craftedsw.kirin.wedoo.distribute.infra.InMemoryWalletRepository;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,10 +17,14 @@ class JSONLoaderTest {
         JSONLoader loader = new JSONLoader();
         InMemoryEndowmentRepository endowmentRepository = new InMemoryEndowmentRepository();
         InMemoryCompanyRepository companyRepository = new InMemoryCompanyRepository();
-        loader.load(JSONLoader.class.getResourceAsStream("/Level1/data/input.json"), endowmentRepository, companyRepository);
+        InMemoryWalletRepository walletRepository = new InMemoryWalletRepository();
+        loader.load(JSONLoader.class.getResourceAsStream("/Level2/data/input.json"), endowmentRepository, companyRepository, walletRepository);
 
         assertThat(endowmentRepository.getEndowment(1)).isPresent();
         assertThat(companyRepository.getCompany("Wedoogift")).isPresent();
+        assertThat(walletRepository.getWallet(1)).isPresent();
+
     }
+
 
 }

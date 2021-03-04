@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Company {
 
@@ -21,20 +21,20 @@ public class Company {
     private final String name;
     private final EndowmentRepository endowmentRepository;
     private final List<Distribution> distributions;
-    private Balance balance;
+    private Balance initialBalance;
 
     public Company(long id, String name, Balance initialBalance, EndowmentRepository endowmentRepository) {
         this.id = id;
         this.name = name;
         this.endowmentRepository = endowmentRepository;
-        this.balance = initialBalance;
+        this.initialBalance = initialBalance;
         this.distributions = new ArrayList<>();
     }
 
     public void distribute(@NotNull Endowment endowment, @NotNull Distribution distribution) {
         LOGGER.info("Distribute {} to endowment {}", distribution, endowment.getId());
         if (notEnoughBalance(distribution)) {
-            throw new NotEnoughFundsException(String.format("Distribution amount %s if greater than company balance %s", distribution.getAmount().getValue(), balance.getValue()));
+            throw new NotEnoughFundsException(String.format("Distribution amount %s if greater than company balance %s", distribution.getAmount().getValue(), initialBalance.getValue()));
         }
 
         distributeToEndowment(endowment, distribution);
@@ -49,8 +49,9 @@ public class Company {
         endowmentRepository.addEndowment(endowment);
     }
 
-    private boolean notEnoughBalance(Distribution distribution) {
-        return distribution.getAmount().isGreaterThan(balance.getValue());
+
+    private boolean notEnoughBalance(Distribution giftDistribution) {
+        return giftDistribution.getAmount().isGreaterThan(initialBalance.getValue());
     }
 
     private void distributeToEndowment(Endowment endowment, Distribution distribution) {
@@ -59,16 +60,32 @@ public class Company {
         distributions.add(distribution);
     }
 
-    private void decreaseBalance(Distribution distribution) {
-        balance = balance.minus(distribution.getAmount());
-        LOGGER.debug("Balance after distribution {}", balance);
+    private void decreaseBalance(Distribution giftDistribution) {
+        initialBalance = initialBalance.minus(giftDistribution.getAmount());
+        LOGGER.debug("Balance after distribution {}", initialBalance);
+    }
+
+    private List<Distribution> getFilteredDistributions(Wallet.Type type) {
+        return distributions.stream()
+                .filter(distribution -> distribution.getType().equals(type))
+                .collect(Collectors.toUnmodifiableList());
+
     }
 
     public List<Distribution> getDistributions() {
-        return Collections.unmodifiableList(distributions);
+        return distributions.stream()
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    public Balance getBalance() {
-        return balance;
+    public List<Distribution> getGiftDistributions() {
+        return getFilteredDistributions(Wallet.Type.GIFT);
+    }
+
+    public List<Distribution> getFoodDistributions() {
+        return getFilteredDistributions(Wallet.Type.FOOD);
+    }
+
+    public Balance getInitialBalance() {
+        return initialBalance;
     }
 }

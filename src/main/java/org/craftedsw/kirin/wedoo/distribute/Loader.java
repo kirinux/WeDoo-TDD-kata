@@ -5,5 +5,5 @@ import java.io.InputStream;
 
 public interface Loader {
 
-    void load(InputStream inputJSON, EndowmentRepository endowmentRepository, CompanyRepository companyRepository) throws IOException;
+    void load(InputStream inputJSON, EndowmentRepository endowmentRepository, CompanyRepository companyRepository, WalletRepository walletRepository) throws IOException;
 }

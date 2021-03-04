@@ -1,4 +1,5 @@
 # Level 2
+
 We currently want to allow the user to benefit from restaurant cards. Distributions of meal vouchers work the same way
 as giftDistributions of gift vouchers with an exception on the validity date. In fact, meal vouchers expire at the end
 of February of the year following the date of giftDistribution.

@@ -5,5 +5,5 @@ import java.util.List;
 
 public interface Exporter {
 
-    void export(Writer writer, List<Company> companies, List<Endowment> endowments, List<Distribution> distributions);
+    void export(Writer writer, List<Company> companies, List<Endowment> endowments, List<Distribution> giftDistributions);
 }

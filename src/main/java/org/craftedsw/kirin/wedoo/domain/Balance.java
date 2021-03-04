@@ -7,7 +7,6 @@ import lombok.Value;
 @Value
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Balance {
-
     private final double value;
 
     public static Balance of(double amount) {

@@ -3,6 +3,12 @@
 The main goal is to build a very easy to understand design and easily extendable, it's based on few uses cases and the
 design would change based on new input.
 
+**Notes**
+
+* I used numeric as id (long) but I think that String should be more readable, easy to handle and more human readable.
+* About distribution, Clock object should be added to simplify and stabilize test (and avoid trick with LocalDate)
+* Wallet design and respositories could be refined
+
 ****Main guidelines****
 
 * Full TDD (Outside-In development)
